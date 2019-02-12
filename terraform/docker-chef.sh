@@ -270,7 +270,6 @@ docker_svc_start () {
   gossip="$svc[gossip]"
   http="$svc[http]"
   ctl="$svc[ctl]"
-
   echo "Starting ${!image}"
   dirs="${DATA_MOUNT:-/mnt/hab}/${1}_svc ${DATA_MOUNT:-/mnt/hab}/${1}_sup"
   echo "Ensuring $dirs directories exist and removing stale LOCK files"
@@ -287,6 +286,7 @@ docker_svc_start () {
     --volume ${DATA_MOUNT:-/mnt/hab}/group:/etc/group:ro \
     --volume ${DATA_MOUNT:-/mnt/hab}/${1}_svc:/hab/svc \
     --volume ${DATA_MOUNT:-/mnt/hab}/${1}_sup:/hab/sup \
+    --mount "type=volume,src=${1}_launcher_state,dst=/hab/launcher,volume-driver=local,volume-opt=type=tmpfs,volume-opt=device=tmpfs,\"volume-opt=o=size=100m,uid=${USER_ID:-42}\"" \
     --cap-drop="NET_BIND_SERVICE" \
     --cap-drop="SETUID" \
     --cap-drop="SETGID" \
